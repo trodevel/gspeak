@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.h 341 2014-04-02 17:05:22Z serge $
+// $Id: gspeak.h 343 2014-04-03 17:06:52Z serge $
 
 #ifndef GSPEAK_H
 #define GSPEAK_H
@@ -29,6 +29,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>                      // std::map
 #include <vector>                   // std::vector
+
+#include "gtts.h"                   // Gtts
 
 
 #include "i_text_to_speech.h"       // ITextToSpeech
@@ -47,10 +49,12 @@ struct Config
 
 class GSpeak: virtual public ITextToSpeech
 {
+    friend class StrHelper;
 private:
 
     struct WordLocale
     {
+
         ITextToSpeech::lang_e   lang;
         std::string             word;
 
@@ -63,15 +67,22 @@ private:
         }
     };
 
-
-    typedef std::map< WordLocale, uint32 >     MapStrToInt;
-
-
     struct Token
     {
         uint32                  id;
         ITextToSpeech::lang_e   lang;
+
+        bool operator<( const Token & rh ) const
+        {
+            if( lang < rh.lang && id < rh.id )
+                return true;
+
+            return false;
+        }
     };
+
+    typedef std::map< WordLocale, uint32 >      MapStrToInt;
+    typedef std::map< Token, std::string >      MapTokenToString;
 
     typedef std::vector< std::string >          StrVect;
     typedef std::vector< Token >                TokenVect;
@@ -95,11 +106,18 @@ private:
 
     bool convert_words_to_tokens( const StrVect & inp, TokenVect & outp );
 
+    bool say_text( const TokenVect & inp, const std::string & wav_file );
+
     uint32 get_word_id( const WordLocale & w );
 
     bool add_new_word( const WordLocale & w, uint32 id );
 
-    bool say_word( const std::string & word, const std::string & wav_file );
+    bool generate_wav_file( const Token & t, std::string & wav_file );
+
+    std::string get_filename_wav( const Token & t ) const;
+    std::string get_filename_mp3( const Token & t ) const;
+
+    bool say_word( const Token & t, const std::string & mp3_file );
 
     static ITextToSpeech::lang_e   check_lang( const std::string & s );
 
@@ -116,6 +134,9 @@ private:
     Config                      config_;
 
     MapStrToInt                 map_;
+    MapTokenToString            words_;
+
+    Gtts                        gtts_;
 };
 
 NAMESPACE_GSPEAK_END

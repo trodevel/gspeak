@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: wav_proc.h 339 2014-04-02 16:29:00Z serge $
+// $Id: wav_proc.h 342 2014-04-03 16:20:46Z serge $
 
 #ifndef WAV_PROC_H
 #define WAV_PROC_H
@@ -34,6 +34,7 @@ NAMESPACE_GSPEAK_START
 
 bool convert_mp3_to_wav( const std::string & inp, const std::string & outp );
 bool join_wav_files( const std::vector< std::string > & inp, const std::string & outp );
+bool append_wav_file( const std::string & base, const std::string & addition );
 
 NAMESPACE_GSPEAK_END
 
