@@ -21,6 +21,7 @@ endif
 
 BOOST_LIB_SYSTEM := libboost-system.a
 BOOST_LIB_THREAD := libboost-thread.a
+BOOST_LIB_FILESYSTEM := libboost-filesystem.a		# file exists
 
 
 BOOST_INC=$(BOOST_PATH)/include
@@ -84,7 +85,7 @@ EXE=
 
 #vpath %.cpp .
 
-SRCC = gtts.cpp gspeak.cpp
+SRCC = gtts.cpp gspeak.cpp wav_proc.cpp
 OBJS = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRCC))
 
 LIB_NAMES = utils
@@ -114,7 +115,8 @@ $(TARGET): $(BINDIR) $(BINDIR)/$(TARGET)
 	@echo "$@ uptodate - ${MODE}"
 
 $(BINDIR)/$(TARGET): $(LIBS) $(OBJDIR)/$(TARGET).o $(OBJS) $(BINDIR)/$(STATICLIB)
-	$(CC) $(CFLAGS) $(CDBG) -o $@ $(OBJDIR)/$(TARGET).o $(LFLAGS_TEST) $(LIBS) $(BOOST_LIB)/$(BOOST_LIB_THREAD) $(BOOST_LIB)/$(BOOST_LIB_SYSTEM)
+	$(CC) $(CFLAGS) $(CDBG) -o $@ $(OBJDIR)/$(TARGET).o $(LFLAGS_TEST) $(LIBS) $(BOOST_LIB)/$(BOOST_LIB_THREAD) $(BOOST_LIB)/$(BOOST_LIB_SYSTEM) \
+		$(BOOST_LIB)/$(BOOST_LIB_FILESYSTEM)
 
 $(BINDIR)/lib%.a: %		# somehow this rule doesn't work
 	cd ../$<; make; cd $(project)
