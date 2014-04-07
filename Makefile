@@ -85,7 +85,7 @@ EXE=
 
 #vpath %.cpp .
 
-SRCC = gtts.cpp gspeak.cpp wav_proc.cpp
+SRCC = gtts.cpp gspeak.cpp wav_proc.cpp gspeak_serial.cpp
 OBJS = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRCC))
 
 LIB_NAMES = utils

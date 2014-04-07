@@ -31,5 +31,7 @@ int main()
 
     g.say( input, "text.wav" );
 
+    g.save_state();
+
     return 0;
 }

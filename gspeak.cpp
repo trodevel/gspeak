@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.cpp 343 2014-04-03 17:06:52Z serge $
+// $Id: gspeak.cpp 349 2014-04-07 17:07:12Z serge $
 
 
 #include "gspeak.h"           // self
@@ -109,6 +109,19 @@ bool GSpeak::init( const Config & config )
     is_inited_  = true;
 
     return true;
+}
+
+bool GSpeak::save_state()
+{
+    SCOPE_LOCK( mutex_ );
+
+    if( !is_inited__() )
+    {
+        dummy_log( 0, MODULENAME, "ERROR: not inited" );
+        return false;
+    }
+
+    return save_state__();
 }
 
 bool GSpeak::is_inited__() const
@@ -300,7 +313,7 @@ bool GSpeak::convert_words_to_tokens( const StrVect & inp, TokenVect & outp )
 
 uint32 GSpeak::get_word_id( const WordLocale & w )
 {
-    if( map_.count( w ) == 0 )
+    if( word_to_id_.count( w ) == 0 )
     {
         last_id_++;
 
@@ -309,26 +322,26 @@ uint32 GSpeak::get_word_id( const WordLocale & w )
         return last_id_;
     }
 
-    return map_[ w ];
+    return word_to_id_[ w ];
 }
 
 bool GSpeak::add_new_word( const WordLocale & w, uint32 id )
 {
-    map_[ w ]   = id;
+    word_to_id_[ w ]   = id;
 
     Token t;
 
     t.id    = id;
     t.lang  = w.lang;
 
-    words_.insert( MapTokenToString::value_type( t, w.word ) );
+    id_to_word_.insert( MapTokenToString::value_type( t, w.word ) );
 
     return true;
 }
 
 bool GSpeak::say_word( const Token & t, const std::string & mp3_file )
 {
-    const std::string & w = words_[ t ];
+    const std::string & w = id_to_word_[ t ];
 
     gtts_.say( w, mp3_file, t.lang );
 

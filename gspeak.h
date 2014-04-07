@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.h 343 2014-04-03 17:06:52Z serge $
+// $Id: gspeak.h 348 2014-04-07 17:06:48Z serge $
 
 #ifndef GSPEAK_H
 #define GSPEAK_H
@@ -50,7 +50,8 @@ struct Config
 class GSpeak: virtual public ITextToSpeech
 {
     friend class StrHelper;
-private:
+//private:
+public:
 
     struct WordLocale
     {
@@ -69,6 +70,8 @@ private:
 
     struct Token
     {
+        //friend class boost::serialization::access;
+
         uint32                  id;
         ITextToSpeech::lang_e   lang;
 
@@ -81,7 +84,7 @@ private:
         }
     };
 
-    typedef std::map< WordLocale, uint32 >      MapStrToInt;
+    typedef std::map< WordLocale, uint32 >      MapWordLocaleToInt;
     typedef std::map< Token, std::string >      MapTokenToString;
 
     typedef std::vector< std::string >          StrVect;
@@ -103,6 +106,9 @@ public:
 private:
 
     bool is_inited__() const;
+
+    bool save_state__();
+
 
     bool convert_words_to_tokens( const StrVect & inp, TokenVect & outp );
 
@@ -133,8 +139,8 @@ private:
 
     Config                      config_;
 
-    MapStrToInt                 map_;
-    MapTokenToString            words_;
+    MapWordLocaleToInt          word_to_id_;
+    MapTokenToString            id_to_word_;
 
     Gtts                        gtts_;
 };
