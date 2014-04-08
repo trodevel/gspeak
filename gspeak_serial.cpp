@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak_serial.cpp 347 2014-04-07 17:06:00Z serge $
+// $Id: gspeak_serial.cpp 354 2014-04-08 17:10:22Z serge $
 
 
 #include "gspeak.h"           // self
@@ -50,12 +50,6 @@ void serialize( Archive & ar, gspeak::GSpeak::Token & g, const unsigned int vers
     ar & g.lang;
 }
 
-template<class Archive>
-void serialize( Archive & ar, gspeak::GSpeak::MapTokenToString & g, const unsigned int version )
-{
-    ar & g;
-}
-
 } // namespace serialization
 } // namespace boost
 
@@ -67,7 +61,22 @@ bool GSpeak::save_state__()
 
     boost::archive::text_oarchive oa( ofs );
 
+    std::cout << "size = " << id_to_word_.size() << "\n";
+
     oa << BOOST_SERIALIZATION_NVP( id_to_word_ );
+
+    return true;
+}
+
+bool GSpeak::load_state__()
+{
+    std::ifstream fs( config_.word_base_path );
+
+    boost::archive::text_iarchive oa( fs );
+
+    oa >> BOOST_SERIALIZATION_NVP( id_to_word_ );
+
+    std::cout << "load size = " << id_to_word_.size() << "\n";
 
     return true;
 }

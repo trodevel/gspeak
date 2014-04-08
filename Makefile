@@ -22,6 +22,7 @@ endif
 BOOST_LIB_SYSTEM := libboost-system.a
 BOOST_LIB_THREAD := libboost-thread.a
 BOOST_LIB_FILESYSTEM := libboost-filesystem.a		# file exists
+BOOST_LIB_SERIALIZATION := libboost_serialization.a
 
 
 BOOST_INC=$(BOOST_PATH)/include
@@ -116,7 +117,7 @@ $(TARGET): $(BINDIR) $(BINDIR)/$(TARGET)
 
 $(BINDIR)/$(TARGET): $(LIBS) $(OBJDIR)/$(TARGET).o $(OBJS) $(BINDIR)/$(STATICLIB)
 	$(CC) $(CFLAGS) $(CDBG) -o $@ $(OBJDIR)/$(TARGET).o $(LFLAGS_TEST) $(LIBS) $(BOOST_LIB)/$(BOOST_LIB_THREAD) $(BOOST_LIB)/$(BOOST_LIB_SYSTEM) \
-		$(BOOST_LIB)/$(BOOST_LIB_FILESYSTEM)
+		$(BOOST_LIB)/$(BOOST_LIB_FILESYSTEM) $(BOOST_LIB)/$(BOOST_LIB_SERIALIZATION)
 
 $(BINDIR)/lib%.a: %		# somehow this rule doesn't work
 	cd ../$<; make; cd $(project)

@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.h 348 2014-04-07 17:06:48Z serge $
+// $Id: gspeak.h 354 2014-04-08 17:10:22Z serge $
 
 #ifndef GSPEAK_H
 #define GSPEAK_H
@@ -108,6 +108,8 @@ private:
     bool is_inited__() const;
 
     bool save_state__();
+
+    bool load_state__();
 
 
     bool convert_words_to_tokens( const StrVect & inp, TokenVect & outp );

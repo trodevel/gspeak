@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.cpp 349 2014-04-07 17:07:12Z serge $
+// $Id: gspeak.cpp 355 2014-04-08 17:14:12Z serge $
 
 
 #include "gspeak.h"           // self
@@ -105,6 +105,11 @@ bool GSpeak::init( const Config & config )
     }
 
     config_ = config;
+
+    if( false == load_state__() )
+    {
+        dummy_log( 0, MODULENAME, "WARNING: cannot load state" );
+    }
 
     is_inited_  = true;
 
