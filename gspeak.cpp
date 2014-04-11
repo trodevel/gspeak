@@ -19,14 +19,18 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.cpp 360 2014-04-10 17:12:00Z serge $
+// $Id: gspeak.cpp 368 2014-04-11 17:36:13Z serge $
 
 
 #include "gspeak.h"           // self
 
 #include <boost/bind.hpp>
 #include <boost/filesystem.hpp>     // boost::filesystem::exists
+#include <boost/algorithm/string.hpp>   // to_lower_copy
 #include <sstream>                  // std::ostringstream
+#include <locale>                   // std::locale
+
+#include <functional>               // std::hash
 
 #include "../utils/dummy_logger.h"      // dummy_log
 #include "../utils/wrap_mutex.h"        // SCOPE_LOCK
@@ -68,7 +72,7 @@ static std::string to_string( const GSpeak::Token & t )
 };
 
 GSpeak::GSpeak():
-    is_inited_( false ), last_id_( 0 )
+    is_inited_( false )
 {
 }
 
@@ -155,6 +159,8 @@ bool GSpeak::say( const std::string & text, const std::string & filename, lang_e
 
     convert_words_to_tokens( words, ids );
 
+    say_text( ids, filename );
+
     return true;
 }
 std::string GSpeak::get_error_msg() const
@@ -193,6 +199,8 @@ bool GSpeak::say_text( const TokenVect & inp, const std::string & wav_file )
 
         wav_files.push_back( file );
     }
+
+    join_wav_files( wav_files, wav_file );
 
     return true;
 }
@@ -281,6 +289,46 @@ ITextToSpeech::lang_e   GSpeak::check_lang( const std::string & s )
     return ITextToSpeech::UNKNOWN;
 }
 
+std::string GSpeak::get_locale_name( ITextToSpeech::lang_e lang )
+{
+    static const std::string def  = "en_GB.UTF-8";
+    static const std::string en  = "en_GB.UTF-8";
+    static const std::string de  = "de_DE.UTF-8";
+    static const std::string ru  = "ru_RU.UTF-8";
+    switch( lang )
+    {
+    case ITextToSpeech::UNKNOWN:
+        return def;
+    case ITextToSpeech::EN:
+        return en;
+    case ITextToSpeech::DE:
+        return de;
+    case ITextToSpeech::RU:
+        return ru;
+    default:
+        break;
+    }
+
+    return def;
+
+}
+
+void GSpeak::localize( WordLocale & w )
+{
+    try
+    {
+        std::string loc_name    = get_locale_name( w.lang );
+
+        std::locale loc( loc_name.c_str() );
+
+        w.word  = boost::algorithm::to_lower_copy( w.word, loc );
+    }
+    catch( std::runtime_error &e )
+    {
+
+    }
+}
+
 bool GSpeak::convert_words_to_tokens( const StrVect & inp, TokenVect & outp )
 {
     ITextToSpeech::lang_e lang = ITextToSpeech::EN;
@@ -299,6 +347,8 @@ bool GSpeak::convert_words_to_tokens( const StrVect & inp, TokenVect & outp )
 
         w.lang  = lang;
         w.word  = s;
+
+        localize( w );
 
         uint32                  id = get_word_id( w );
 
@@ -325,11 +375,11 @@ uint32 GSpeak::get_word_id( const WordLocale & w )
 
     if( res == word_to_id_.end() )
     {
-        last_id_++;
+        uint32 id  = std::hash< std::string >()( w.word );
 
-        add_new_word( w, last_id_ );
+        add_new_word( w, id );
 
-        return last_id_;
+        return id;
     }
 
     return res->second;

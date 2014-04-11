@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gtts.cpp 338 2014-04-01 22:43:01Z serge $
+// $Id: gtts.cpp 367 2014-04-11 17:35:41Z serge $
 
 
 #include "gtts.h"           // self
@@ -52,8 +52,7 @@ bool Gtts::say( const std::string & text, const std::string & filename, lang_e l
 
     s <<
         "#/bin/bash \n" <<
-        "wget -q -U Mozilla -O " << filename << ".mp3 \"http://translate.google.com/translate_tts?ie=UTF-8&tl=" << lang_s << "&q=$(echo \\\"" << text << "\\\" | tr ' ' + )\"\n"
-        "sox " << filename << ".mp3 " << filename;
+        "wget -q -U Mozilla -O " << filename << " \"http://translate.google.com/translate_tts?ie=UTF-8&tl=" << lang_s << "&q=$(echo \\\"" << text << "\\\" | tr ' ' + )\"\n";
 
     std::cout << "executing: " << s.str() << std::endl;
 
@@ -64,8 +63,8 @@ bool Gtts::say( const std::string & text, const std::string & filename, lang_e l
 const std::string & Gtts::to_string( lang_e l )
 {
     static std::string en( "en" );
-    static std::string de( "en" );
-    static std::string ru( "en" );
+    static std::string de( "de" );
+    static std::string ru( "ru" );
 
     switch( l )
     {

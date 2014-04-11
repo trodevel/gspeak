@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.h 361 2014-04-10 17:13:22Z serge $
+// $Id: gspeak.h 364 2014-04-11 16:56:22Z serge $
 
 #ifndef GSPEAK_H
 #define GSPEAK_H
@@ -125,6 +125,10 @@ private:
 
     uint32 get_word_id( const WordLocale & w );
 
+    static void localize( WordLocale & w );
+
+    static std::string get_locale_name( ITextToSpeech::lang_e lang );
+
     bool add_new_word( const WordLocale & w, uint32 id );
 
     bool generate_wav_file( const Token & t, std::string & wav_file );
@@ -143,8 +147,6 @@ private:
     mutable boost::mutex        mutex_;
 
     bool                        is_inited_;
-
-    uint32                      last_id_;
 
     Config                      config_;
 
