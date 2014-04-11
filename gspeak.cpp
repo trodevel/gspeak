@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.cpp 368 2014-04-11 17:36:13Z serge $
+// $Id: gspeak.cpp 369 2014-04-11 22:53:30Z serge $
 
 
 #include "gspeak.h"           // self
@@ -30,7 +30,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <sstream>                  // std::ostringstream
 #include <locale>                   // std::locale
 
-#include <functional>               // std::hash
+#include <boost/functional/hash.hpp>    // boost::hash_combine
 
 #include "../utils/dummy_logger.h"      // dummy_log
 #include "../utils/wrap_mutex.h"        // SCOPE_LOCK
@@ -369,13 +369,24 @@ bool GSpeak::convert_words_to_tokens( const StrVect & inp, TokenVect & outp )
     return true;
 }
 
+uint32 GSpeak::get_word_hash( const WordLocale & w )
+{
+    std::size_t seed = 0;
+
+    boost::hash_combine( seed, boost::hash_value( w.lang ) );
+
+    boost::hash_combine( seed, boost::hash_value( w.word ) );
+
+    return seed;
+}
+
 uint32 GSpeak::get_word_id( const WordLocale & w )
 {
     auto res = word_to_id_.find( w );
 
     if( res == word_to_id_.end() )
     {
-        uint32 id  = std::hash< std::string >()( w.word );
+        uint32 id  = get_word_hash( w );
 
         add_new_word( w, id );
 

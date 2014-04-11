@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.h 364 2014-04-11 16:56:22Z serge $
+// $Id: gspeak.h 369 2014-04-11 22:53:30Z serge $
 
 #ifndef GSPEAK_H
 #define GSPEAK_H
@@ -122,6 +122,8 @@ private:
     bool convert_words_to_tokens( const StrVect & inp, TokenVect & outp );
 
     bool say_text( const TokenVect & inp, const std::string & wav_file );
+
+    static uint32 get_word_hash( const WordLocale & w );
 
     uint32 get_word_id( const WordLocale & w );
 
