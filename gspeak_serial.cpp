@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak_serial.cpp 354 2014-04-08 17:10:22Z serge $
+// $Id: gspeak_serial.cpp 357 2014-04-10 16:22:26Z serge $
 
 
 #include "gspeak.h"           // self
@@ -70,15 +70,24 @@ bool GSpeak::save_state__()
 
 bool GSpeak::load_state__()
 {
-    std::ifstream fs( config_.word_base_path );
+    try
+    {
+        std::ifstream fs( config_.word_base_path );
 
-    boost::archive::text_iarchive oa( fs );
+        boost::archive::text_iarchive oa( fs );
 
-    oa >> BOOST_SERIALIZATION_NVP( id_to_word_ );
+        oa >> BOOST_SERIALIZATION_NVP( id_to_word_ );
 
-    std::cout << "load size = " << id_to_word_.size() << "\n";
+        std::cout << "load size = " << id_to_word_.size() << "\n";
 
-    return true;
+        return true;
+    }
+    catch( std::exception & e )
+    {
+        set_error_msg__( std::string( "got exception " ) + e.what() );
+    }
+
+    return false;
 }
 
 NAMESPACE_GSPEAK_END

@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.cpp 355 2014-04-08 17:14:12Z serge $
+// $Id: gspeak.cpp 360 2014-04-10 17:12:00Z serge $
 
 
 #include "gspeak.h"           // self
@@ -161,7 +161,12 @@ std::string GSpeak::get_error_msg() const
 {
     SCOPE_LOCK( mutex_ );
 
-    return "";
+    return error_msg_;
+}
+
+void GSpeak::set_error_msg__( const std::string & s )
+{
+    error_msg_  = s;
 }
 
 bool GSpeak::say_text( const TokenVect & inp, const std::string & wav_file )
@@ -280,10 +285,8 @@ bool GSpeak::convert_words_to_tokens( const StrVect & inp, TokenVect & outp )
 {
     ITextToSpeech::lang_e lang = ITextToSpeech::EN;
 
-    for( int i = 0; i < ( int ) inp.size(); ++i )
+    for( auto s : inp )
     {
-        const std::string & s = inp[i];
-
         ITextToSpeech::lang_e l = check_lang( s );
 
         if( l != ITextToSpeech::lang_e::UNKNOWN )
@@ -318,7 +321,9 @@ bool GSpeak::convert_words_to_tokens( const StrVect & inp, TokenVect & outp )
 
 uint32 GSpeak::get_word_id( const WordLocale & w )
 {
-    if( word_to_id_.count( w ) == 0 )
+    auto res = word_to_id_.find( w );
+
+    if( res == word_to_id_.end() )
     {
         last_id_++;
 
@@ -327,7 +332,7 @@ uint32 GSpeak::get_word_id( const WordLocale & w )
         return last_id_;
     }
 
-    return word_to_id_[ w ];
+    return res->second;
 }
 
 bool GSpeak::add_new_word( const WordLocale & w, uint32 id )

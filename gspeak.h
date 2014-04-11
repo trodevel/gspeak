@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.h 354 2014-04-08 17:10:22Z serge $
+// $Id: gspeak.h 361 2014-04-10 17:13:22Z serge $
 
 #ifndef GSPEAK_H
 #define GSPEAK_H
@@ -61,7 +61,10 @@ public:
 
         bool operator<( const WordLocale & rh ) const
         {
-            if( lang < rh.lang && word < rh.word )
+            if( lang < rh.lang )
+                return true;
+
+            if( lang == rh.lang && word < rh.word )
                 return true;
 
             return false;
@@ -77,7 +80,10 @@ public:
 
         bool operator<( const Token & rh ) const
         {
-            if( lang < rh.lang && id < rh.id )
+            if( lang < rh.lang )
+                return true;
+
+            if( lang == rh.lang && id < rh.id )
                 return true;
 
             return false;
@@ -111,6 +117,7 @@ private:
 
     bool load_state__();
 
+    void set_error_msg__( const std::string & s );
 
     bool convert_words_to_tokens( const StrVect & inp, TokenVect & outp );
 
@@ -145,6 +152,8 @@ private:
     MapTokenToString            id_to_word_;
 
     Gtts                        gtts_;
+
+    std::string                 error_msg_;
 };
 
 NAMESPACE_GSPEAK_END
