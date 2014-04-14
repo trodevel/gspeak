@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.cpp 369 2014-04-11 22:53:30Z serge $
+// $Id: gspeak.cpp 372 2014-04-14 17:00:23Z serge $
 
 
 #include "gspeak.h"           // self
@@ -29,6 +29,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <boost/algorithm/string.hpp>   // to_lower_copy
 #include <sstream>                  // std::ostringstream
 #include <locale>                   // std::locale
+#include <set>                      // std::set
 
 #include <boost/functional/hash.hpp>    // boost::hash_combine
 
@@ -36,6 +37,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "../utils/wrap_mutex.h"        // SCOPE_LOCK
 #include "../utils/tokenizer.h"         // tokenize_to_vector
 #include "wav_proc.h"                   // convert_mp3_to_wav
+#include "str_proc.h"                   // split_into_sentences
 
 #include "namespace_gspeak.h"       // NAMESPACE_GSPEAK_START
 
@@ -150,7 +152,7 @@ bool GSpeak::say( const std::string & text, const std::string & filename, lang_e
 
     std::vector< std::string > words;
 
-    tokenize_to_vector( words, text, " " );
+    split_into_sentences( words, text );
 
     if( words.empty() )
         return true;
@@ -163,6 +165,7 @@ bool GSpeak::say( const std::string & text, const std::string & filename, lang_e
 
     return true;
 }
+
 std::string GSpeak::get_error_msg() const
 {
     SCOPE_LOCK( mutex_ );

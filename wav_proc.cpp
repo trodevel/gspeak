@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: wav_proc.cpp 342 2014-04-03 16:20:46Z serge $
+// $Id: wav_proc.cpp 375 2014-04-14 17:31:59Z serge $
 
 
 #include "wav_proc.h"           // self
@@ -57,18 +57,27 @@ bool join_wav_files( const std::vector< std::string > & inp, const std::string &
 
     std::ostringstream s;
 
-    s <<
-        "#/bin/bash \n"
-        "sox ";
-
-    for( int i = 0; i < (int) inp.size(); ++i )
+    if( inp.size() == 1 )
     {
-        s << inp[i] << " ";
+        s <<
+            "#/bin/bash \n"
+            "cp " << inp[0] << " " << outp;
+    }
+    else
+    {
+        s <<
+            "#/bin/bash \n"
+            "sox ";
+
+        for( auto str : inp )
+        {
+            s << str << " ";
+        }
+
+        s << outp;
     }
 
-    s << outp;
-
-    dummy_log( 0, MODULENAME, "DBG: executing: %s", s.str().c_str() );
+    //dummy_log( 0, MODULENAME, "DBG: executing: %s", s.str().c_str() );
 
     system( s.str().c_str() );
 
