@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: str_proc.h 374 2014-04-14 17:15:26Z serge $
+// $Id: str_proc.h 389 2014-04-15 17:20:01Z serge $
 
 #ifndef STR_PROC_H
 #define STR_PROC_H
@@ -34,6 +34,8 @@ NAMESPACE_GSPEAK_START
 
 
 void split_into_sentences( std::vector<std::string> & res, const std::string & str );
+
+void remove_special_symbols( std::string & s );
 
 void remove_extra_spaces( std::string & s );
 

@@ -19,13 +19,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: str_proc.cpp 381 2014-04-14 23:31:28Z serge $
+// $Id: str_proc.cpp 389 2014-04-15 17:20:01Z serge $
 
 
 #include "str_proc.h"               // self
 
 #include <set>                      // std::set
 #include <algorithm>                // std::unique
+#include <boost/algorithm/string/replace.hpp>   // replace_all
 
 #include "../utils/dummy_logger.h"      // dummy_log
 #include "../utils/tokenizer.h"         // tokenize_to_vector
@@ -116,12 +117,18 @@ void split( std::vector<std::string> & res, const std::string & str )
     }
 }
 
+void remove_special_symbols( std::string & s )
+{
+    boost::replace_all( s, "~@#$%^&*()__+`-=[]{}\\:|<>/", " " );
+}
+
 void split_into_sentences( std::vector<std::string> & res, const std::string & str )
 {
     split( res, str );
 
     for( auto & s : res )
     {
+        remove_special_symbols( s );
         trim( s );
         remove_extra_spaces( s );
     }

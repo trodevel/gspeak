@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gtts.h 338 2014-04-01 22:43:01Z serge $
+// $Id: gtts.h 388 2014-04-15 17:18:36Z serge $
 
 #ifndef GTTS_H
 #define GTTS_H
@@ -48,6 +48,7 @@ public:
 
 private:
 
+    static const std::string escape_string( const std::string & s );
     static const std::string& to_string( lang_e l );
 
 public:

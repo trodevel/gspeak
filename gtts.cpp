@@ -19,13 +19,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gtts.cpp 367 2014-04-11 17:35:41Z serge $
+// $Id: gtts.cpp 388 2014-04-15 17:18:36Z serge $
 
 
 #include "gtts.h"           // self
 
 #include <sstream>                  // std::ostringstream
 #include <cstdlib>                  // system
+#include <boost/algorithm/string/replace.hpp>   // replace_all_copy
 
 #include "../utils/dummy_logger.h"      // dummy_log
 #include "../utils/wrap_mutex.h"        // SCOPE_LOCK
@@ -44,15 +45,26 @@ Gtts::~Gtts()
 {
 }
 
+const std::string Gtts::escape_string( const std::string & s )
+{
+    std::string res = boost::replace_all_copy<std::string>( s, " ", "+" );
+
+    boost::replace_all( res, "\"", "\\\"" );
+
+    return res;
+}
+
 bool Gtts::say( const std::string & text, const std::string & filename, lang_e lang )
 {
+    std::string text_no_sp = escape_string( text );
+
     std::ostringstream s;
 
     const std::string & lang_s  = to_string( lang );
 
     s <<
         "#/bin/bash \n" <<
-        "wget -q -U Mozilla -O " << filename << " \"http://translate.google.com/translate_tts?ie=UTF-8&tl=" << lang_s << "&q=$(echo \\\"" << text << "\\\" | tr ' ' + )\"\n";
+        "wget -q -U Mozilla -O " << filename << " \"http://translate.google.com/translate_tts?ie=UTF-8&tl=" << lang_s << "&q=" << text_no_sp << "\"\n";
 
     std::cout << "executing: " << s.str() << std::endl;
 
