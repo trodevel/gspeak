@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gtts.cpp 388 2014-04-15 17:18:36Z serge $
+// $Id: gtts.cpp 401 2014-04-16 17:13:59Z serge $
 
 
 #include "gtts.h"           // self
@@ -30,6 +30,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "../utils/dummy_logger.h"      // dummy_log
 #include "../utils/wrap_mutex.h"        // SCOPE_LOCK
+#include "../utils/HTTPDownloader.hpp"  // HTTPDownloader
 
 #include "namespace_gspeak.h"       // NAMESPACE_GSPEAK_START
 
@@ -54,6 +55,15 @@ const std::string Gtts::escape_string( const std::string & s )
     return res;
 }
 
+const std::string Gtts::prepare_url( const std::string & text, const std::string & lang )
+{
+    std::ostringstream s;
+
+    s << "http://translate.google.com/translate_tts?ie=UTF-8&tl=" << lang << "&q=" << text;
+
+    return s.str();
+}
+
 bool Gtts::say( const std::string & text, const std::string & filename, lang_e lang )
 {
     std::string text_no_sp = escape_string( text );
@@ -62,14 +72,16 @@ bool Gtts::say( const std::string & text, const std::string & filename, lang_e l
 
     const std::string & lang_s  = to_string( lang );
 
-    s <<
-        "#/bin/bash \n" <<
-        "wget -q -U Mozilla -O " << filename << " \"http://translate.google.com/translate_tts?ie=UTF-8&tl=" << lang_s << "&q=" << text_no_sp << "\"\n";
 
-    std::cout << "executing: " << s.str() << std::endl;
+    std::string url = prepare_url( text_no_sp, lang_s );
 
-    system( s.str().c_str() );
-    return false;
+    HTTPDownloader h;
+
+    bool b = h.download_file( url, filename );
+
+    std::cout << "downloaded: " << ( b ? "ok" : "ERROR" ) << std::endl;
+
+    return b;
 }
 
 const std::string & Gtts::to_string( lang_e l )

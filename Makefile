@@ -28,6 +28,8 @@ BOOST_LIB_SERIALIZATION := libboost_serialization.a
 BOOST_INC=$(BOOST_PATH)/include
 BOOST_LIB=$(BOOST_PATH)/lib
 
+EXT_LIBS=-lcurl
+
 ###################################################################
 
 LIBNAME=libgspeak
@@ -117,7 +119,7 @@ $(TARGET): $(BINDIR) $(BINDIR)/$(TARGET)
 
 $(BINDIR)/$(TARGET): $(LIBS) $(OBJDIR)/$(TARGET).o $(OBJS) $(BINDIR)/$(STATICLIB)
 	$(CC) $(CFLAGS) $(CDBG) -o $@ $(OBJDIR)/$(TARGET).o $(LFLAGS_TEST) $(LIBS) $(BOOST_LIB)/$(BOOST_LIB_THREAD) $(BOOST_LIB)/$(BOOST_LIB_SYSTEM) \
-		$(BOOST_LIB)/$(BOOST_LIB_FILESYSTEM) $(BOOST_LIB)/$(BOOST_LIB_SERIALIZATION)
+		$(BOOST_LIB)/$(BOOST_LIB_FILESYSTEM) $(BOOST_LIB)/$(BOOST_LIB_SERIALIZATION) $(EXT_LIBS)
 
 $(BINDIR)/lib%.a: %		# somehow this rule doesn't work
 	cd ../$<; make; cd $(project)

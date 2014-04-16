@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.cpp 372 2014-04-14 17:00:23Z serge $
+// $Id: gspeak.cpp 399 2014-04-16 17:11:53Z serge $
 
 
 #include "gspeak.h"           // self
@@ -417,9 +417,7 @@ bool GSpeak::say_word( const Token & t, const std::string & mp3_file )
 {
     const std::string & w = id_to_word_[ t ];
 
-    gtts_.say( w, mp3_file, t.lang );
-
-    return true;
+    return gtts_.say( w, mp3_file, t.lang );
 }
 
 
