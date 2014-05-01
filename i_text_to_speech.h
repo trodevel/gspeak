@@ -19,14 +19,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: i_text_to_speech.h 338 2014-04-01 22:43:01Z serge $
+// $Id: i_text_to_speech.h 477 2014-04-29 17:50:50Z serge $
 
 
 #ifndef I_TEXT_TO_SPEECH_H
 #define I_TEXT_TO_SPEECH_H
 
 #include <string>                   // std::string
-#include "../utils/Types.h"         // uint32
+#include "../utils/types.h"         // uint32
 
 #include "namespace_gspeak.h"       // NAMESPACE_GSPEAK_START
 

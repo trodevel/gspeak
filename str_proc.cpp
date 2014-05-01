@@ -19,18 +19,18 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: str_proc.cpp 389 2014-04-15 17:20:01Z serge $
+// $Id: str_proc.cpp 463 2014-04-29 16:53:44Z serge $
 
 
 #include "str_proc.h"               // self
 
 #include <set>                      // std::set
-#include <algorithm>                // std::unique
 #include <boost/algorithm/string/replace.hpp>   // replace_all
 
 #include "../utils/dummy_logger.h"      // dummy_log
 #include "../utils/tokenizer.h"         // tokenize_to_vector
-#include "../utils/trim.h"          // trim
+#include "../utils/trim.h"              // trim
+#include "../utils/remove_extra_spaces.h"   // remove_extra_spaces
 
 #include "namespace_gspeak.h"       // NAMESPACE_GSPEAK_START
 
@@ -130,21 +130,8 @@ void split_into_sentences( std::vector<std::string> & res, const std::string & s
     {
         remove_special_symbols( s );
         trim( s );
-        remove_extra_spaces( s );
+        ::remove_extra_spaces( s );
     }
-}
-
-bool BothAreSpaces( char lhs, char rhs )
-{
-    return ( lhs == rhs ) && ( lhs == ' ' );
-}
-
-void remove_extra_spaces( std::string & s )
-{
-    // stackoverflow.com/questions/8362094/replace-multiple-spaces-with-one-space-in-a-string
-
-    std::string::iterator new_end = std::unique( s.begin(), s.end(), BothAreSpaces );
-    s.erase( new_end, s.end() );
 }
 
 NAMESPACE_GSPEAK_END
