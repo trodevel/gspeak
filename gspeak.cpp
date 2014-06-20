@@ -19,14 +19,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.cpp 399 2014-04-16 17:11:53Z serge $
+// $Id: gspeak.cpp 592 2014-06-18 16:43:10Z serge $
 
 
 #include "gspeak.h"           // self
 
 #include <boost/bind.hpp>
 #include <boost/filesystem.hpp>     // boost::filesystem::exists
-#include <boost/algorithm/string.hpp>   // to_lower_copy
+#include <boost/locale.hpp>         // boost::locale
 #include <sstream>                  // std::ostringstream
 #include <locale>                   // std::locale
 #include <set>                      // std::set
@@ -320,11 +320,13 @@ void GSpeak::localize( WordLocale & w )
 {
     try
     {
-        std::string loc_name    = get_locale_name( w.lang );
+        boost::locale::generator gen;
+        std::locale loc = gen( "" );
 
-        std::locale loc( loc_name.c_str() );
+        // Create system default locale
+        std::locale::global( loc );
 
-        w.word  = boost::algorithm::to_lower_copy( w.word, loc );
+        w.word = boost::locale::to_lower( w.word );
     }
     catch( std::runtime_error &e )
     {
