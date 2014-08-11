@@ -19,10 +19,10 @@ endif
 
 ###################################################################
 
-BOOST_INC=$(BOOST_PATH)/include
-BOOST_LIB_PATH=$(BOOST_PATH)/lib
+BOOST_INC=$(BOOST_PATH)
+BOOST_LIB_PATH=$(BOOST_PATH)/stage/lib
 
-BOOST_LIB_NAMES := boost-system boost-thread boost-filesystem boost_serialization boost_locale
+BOOST_LIB_NAMES := boost_system boost_thread boost_filesystem boost_serialization boost_locale
 BOOST_LIBS = $(patsubst %,$(BOOST_LIB_PATH)/lib%.a,$(BOOST_LIB_NAMES))
 
 
