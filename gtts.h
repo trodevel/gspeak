@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gtts.h 401 2014-04-16 17:13:59Z serge $
+// $Id: gtts.h 378 2014-04-16 17:13:59Z serge $
 
 #ifndef GTTS_H
 #define GTTS_H

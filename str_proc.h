@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: str_proc.h 389 2014-04-15 17:20:01Z serge $
+// $Id: str_proc.h 366 2014-04-15 17:20:01Z serge $
 
 #ifndef STR_PROC_H
 #define STR_PROC_H

@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: wav_proc.h 342 2014-04-03 16:20:46Z serge $
+// $Id: wav_proc.h 319 2014-04-03 16:20:46Z serge $
 
 #ifndef WAV_PROC_H
 #define WAV_PROC_H

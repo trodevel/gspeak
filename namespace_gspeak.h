@@ -1,5 +1,5 @@
 /*
- * $Id: namespace_gspeak.h 338 2014-04-01 22:43:01Z serge $
+ * $Id: namespace_gspeak.h 315 2014-04-01 22:43:01Z serge $
  */
 
 #ifndef NAMESPACE_GSPEAK_H

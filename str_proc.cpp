@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: str_proc.cpp 463 2014-04-29 16:53:44Z serge $
+// $Id: str_proc.cpp 440 2014-04-29 16:53:44Z serge $
 
 
 #include "str_proc.h"               // self

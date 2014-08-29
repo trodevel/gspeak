@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: wav_proc.cpp 387 2014-04-15 16:45:05Z serge $
+// $Id: wav_proc.cpp 364 2014-04-15 16:45:05Z serge $
 
 
 #include "wav_proc.h"           // self

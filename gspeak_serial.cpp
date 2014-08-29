@@ -19,13 +19,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak_serial.cpp 357 2014-04-10 16:22:26Z serge $
+// $Id: gspeak_serial.cpp 1000 2014-08-29 18:15:22Z serge $
 
 
 #include "gspeak.h"           // self
 
 #include <boost/bind.hpp>
-#include <boost/filesystem.hpp>     // boost::filesystem::exists
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/map.hpp>

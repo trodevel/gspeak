@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.cpp 592 2014-06-18 16:43:10Z serge $
+// $Id: gspeak.cpp 569 2014-06-18 16:43:10Z serge $
 
 
 #include "gspeak.h"           // self

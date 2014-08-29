@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.h 372 2014-04-14 17:00:23Z serge $
+// $Id: gspeak.h 349 2014-04-14 17:00:23Z serge $
 
 #ifndef GSPEAK_H
 #define GSPEAK_H
