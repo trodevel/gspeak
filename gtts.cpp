@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gtts.cpp 378 2014-04-16 17:13:59Z serge $
+// $Id: gtts.cpp 1021 2014-09-18 17:44:53Z serge $
 
 
 #include "gtts.h"           // self
@@ -79,7 +79,10 @@ bool Gtts::say( const std::string & text, const std::string & filename, lang_e l
 
     bool b = h.download_file( url, filename );
 
-    std::cout << "downloaded: " << ( b ? "ok" : "ERROR" ) << std::endl;
+    if( b == false )
+        dummy_log_error( MODULENAME, "cannot download '%s'", filename.c_str() );
+    else
+        dummy_log_debug( MODULENAME, "downloaded: OK '%s'", filename.c_str() );
 
     return b;
 }

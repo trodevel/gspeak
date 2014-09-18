@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.cpp 569 2014-06-18 16:43:10Z serge $
+// $Id: gspeak.cpp 1020 2014-09-18 17:29:11Z serge $
 
 
 #include "gspeak.h"           // self
@@ -88,25 +88,25 @@ bool GSpeak::init( const Config & config )
 
     if( is_inited__() == true )
     {
-        dummy_log( 0, MODULENAME, "ERROR: already inited" );
+        dummy_log_error( MODULENAME, "ERROR: already inited" );
         return false;
     }
 
     if( config.word_base_path.empty() )
     {
-        dummy_log( 0, MODULENAME, "ERROR: word base path is empty" );
+        dummy_log_error( MODULENAME, "ERROR: word base path is empty" );
         return false;
     }
 
     if( config.data_path.empty() )
     {
-        dummy_log( 0, MODULENAME, "ERROR: data path is empty" );
+        dummy_log_error( MODULENAME, "ERROR: data path is empty" );
         return false;
     }
 
     if( config.temp_path.empty() )
     {
-        dummy_log( 0, MODULENAME, "ERROR: temp path is empty" );
+        dummy_log_error( MODULENAME, "ERROR: temp path is empty" );
         return false;
     }
 
@@ -114,7 +114,7 @@ bool GSpeak::init( const Config & config )
 
     if( false == load_state__() )
     {
-        dummy_log( 0, MODULENAME, "WARNING: cannot load state" );
+        dummy_log_warn( MODULENAME, "WARNING: cannot load state" );
     }
 
     is_inited_  = true;
@@ -128,7 +128,7 @@ bool GSpeak::save_state()
 
     if( !is_inited__() )
     {
-        dummy_log( 0, MODULENAME, "ERROR: not inited" );
+        dummy_log_error( MODULENAME, "ERROR: not inited" );
         return false;
     }
 
@@ -146,7 +146,7 @@ bool GSpeak::say( const std::string & text, const std::string & filename, lang_e
 
     if( !is_inited__() )
     {
-        dummy_log( 0, MODULENAME, "ERROR: not inited" );
+        dummy_log_error( MODULENAME, "ERROR: not inited" );
         return false;
     }
 
@@ -196,7 +196,7 @@ bool GSpeak::say_text( const TokenVect & inp, const std::string & wav_file )
 
         if( b == false )
         {
-            dummy_log( 0, MODULENAME, "ERROR: cannot generate wav file for token %s", StrHelper::to_string( t ).c_str() );
+            dummy_log_error( MODULENAME, "ERROR: cannot generate wav file for token %s", StrHelper::to_string( t ).c_str() );
             return false;
         }
 
@@ -230,7 +230,7 @@ bool GSpeak::generate_wav_file( const Token & t, std::string & wav_file )
 
         if( b == false )
         {
-            dummy_log( 0, MODULENAME, "ERROR: cannot convert mp3 file to wav for token %s", StrHelper::to_string( t ).c_str() );
+            dummy_log_error( MODULENAME, "ERROR: cannot convert mp3 file to wav for token %s", StrHelper::to_string( t ).c_str() );
             return false;
         }
 
@@ -244,7 +244,7 @@ bool GSpeak::generate_wav_file( const Token & t, std::string & wav_file )
 
     if( b1 == false )
     {
-        dummy_log( 0, MODULENAME, "ERROR: cannot generate mp3 file for token %s", StrHelper::to_string( t ).c_str() );
+        dummy_log_error( MODULENAME, "ERROR: cannot generate mp3 file for token %s", StrHelper::to_string( t ).c_str() );
         return false;
     }
 
@@ -252,7 +252,7 @@ bool GSpeak::generate_wav_file( const Token & t, std::string & wav_file )
 
     if( b2 == false )
     {
-        dummy_log( 0, MODULENAME, "ERROR: cannot convert mp3 file to wav for token %s", StrHelper::to_string( t ).c_str() );
+        dummy_log_error( MODULENAME, "ERROR: cannot convert mp3 file to wav for token %s", StrHelper::to_string( t ).c_str() );
         return false;
     }
 
