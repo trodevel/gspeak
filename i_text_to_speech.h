@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: i_text_to_speech.h 454 2014-04-29 17:50:50Z serge $
+// $Id: i_text_to_speech.h 1075 2014-09-25 16:39:47Z serge $
 
 
 #ifndef I_TEXT_TO_SPEECH_H
@@ -32,18 +32,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 NAMESPACE_GSPEAK_START
 
+enum class lang_e
+{
+    UNKNOWN     = 0,
+    EN,
+    DE,
+    RU
+};
+
 class ITextToSpeech
 {
-public:
-
-    enum lang_e
-    {
-        UNKNOWN     = 0,
-        EN,
-        DE,
-        RU
-    };
-
 public:
     virtual ~ITextToSpeech() {};
 

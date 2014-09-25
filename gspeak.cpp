@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.cpp 1020 2014-09-18 17:29:11Z serge $
+// $Id: gspeak.cpp 1081 2014-09-25 17:16:43Z serge $
 
 
 #include "gspeak.h"           // self
@@ -54,11 +54,22 @@ class StrHelper
 {
 public:
 
+static std::string to_string( lang_e l )
+{
+    if( l == lang_e::EN )
+        return "en";
+    else if( l == lang_e::DE )
+        return "de";
+    else if( l == lang_e::RU )
+        return "ru";
+    return "UNDEF";
+}
+
 static std::string to_string( const GSpeak::WordLocale & w )
 {
     std::ostringstream s;
 
-    s << w.word << " " << w.lang;
+    s << w.word << " " << to_string( w.lang );
 
     return s.str();
 }
@@ -67,7 +78,7 @@ static std::string to_string( const GSpeak::Token & t )
 {
     std::ostringstream s;
 
-    s << t.id << " " << t.lang;
+    s << t.id << " " << to_string( t.lang );
 
     return s.str();
 }
@@ -88,25 +99,25 @@ bool GSpeak::init( const Config & config )
 
     if( is_inited__() == true )
     {
-        dummy_log_error( MODULENAME, "ERROR: already inited" );
+        dummy_log_error( MODULENAME, "already inited" );
         return false;
     }
 
     if( config.word_base_path.empty() )
     {
-        dummy_log_error( MODULENAME, "ERROR: word base path is empty" );
+        dummy_log_error( MODULENAME, "word base path is empty" );
         return false;
     }
 
     if( config.data_path.empty() )
     {
-        dummy_log_error( MODULENAME, "ERROR: data path is empty" );
+        dummy_log_error( MODULENAME, "data path is empty" );
         return false;
     }
 
     if( config.temp_path.empty() )
     {
-        dummy_log_error( MODULENAME, "ERROR: temp path is empty" );
+        dummy_log_error( MODULENAME, "temp path is empty" );
         return false;
     }
 
@@ -114,7 +125,7 @@ bool GSpeak::init( const Config & config )
 
     if( false == load_state__() )
     {
-        dummy_log_warn( MODULENAME, "WARNING: cannot load state" );
+        dummy_log_warn( MODULENAME, "cannot load state" );
     }
 
     is_inited_  = true;
@@ -128,7 +139,7 @@ bool GSpeak::save_state()
 
     if( !is_inited__() )
     {
-        dummy_log_error( MODULENAME, "ERROR: not inited" );
+        dummy_log_error( MODULENAME, "not inited" );
         return false;
     }
 
@@ -146,7 +157,7 @@ bool GSpeak::say( const std::string & text, const std::string & filename, lang_e
 
     if( !is_inited__() )
     {
-        dummy_log_error( MODULENAME, "ERROR: not inited" );
+        dummy_log_error( MODULENAME, "not inited" );
         return false;
     }
 
@@ -159,7 +170,7 @@ bool GSpeak::say( const std::string & text, const std::string & filename, lang_e
 
     TokenVect ids;
 
-    convert_words_to_tokens( words, ids );
+    convert_words_to_tokens( words, ids, lang );
 
     say_text( ids, filename );
 
@@ -196,7 +207,7 @@ bool GSpeak::say_text( const TokenVect & inp, const std::string & wav_file )
 
         if( b == false )
         {
-            dummy_log_error( MODULENAME, "ERROR: cannot generate wav file for token %s", StrHelper::to_string( t ).c_str() );
+            dummy_log_error( MODULENAME, "cannot generate wav file for token %s", StrHelper::to_string( t ).c_str() );
             return false;
         }
 
@@ -230,7 +241,7 @@ bool GSpeak::generate_wav_file( const Token & t, std::string & wav_file )
 
         if( b == false )
         {
-            dummy_log_error( MODULENAME, "ERROR: cannot convert mp3 file to wav for token %s", StrHelper::to_string( t ).c_str() );
+            dummy_log_error( MODULENAME, "cannot convert mp3 file to wav for token %s", StrHelper::to_string( t ).c_str() );
             return false;
         }
 
@@ -244,7 +255,7 @@ bool GSpeak::generate_wav_file( const Token & t, std::string & wav_file )
 
     if( b1 == false )
     {
-        dummy_log_error( MODULENAME, "ERROR: cannot generate mp3 file for token %s", StrHelper::to_string( t ).c_str() );
+        dummy_log_error( MODULENAME, "cannot generate mp3 file for token %s", StrHelper::to_string( t ).c_str() );
         return false;
     }
 
@@ -252,7 +263,7 @@ bool GSpeak::generate_wav_file( const Token & t, std::string & wav_file )
 
     if( b2 == false )
     {
-        dummy_log_error( MODULENAME, "ERROR: cannot convert mp3 file to wav for token %s", StrHelper::to_string( t ).c_str() );
+        dummy_log_error( MODULENAME, "cannot convert mp3 file to wav for token %s", StrHelper::to_string( t ).c_str() );
         return false;
     }
 
@@ -280,19 +291,19 @@ std::string GSpeak::get_filename_mp3( const Token & t ) const
 }
 
 
-ITextToSpeech::lang_e   GSpeak::check_lang( const std::string & s )
+lang_e   GSpeak::check_lang( const std::string & s )
 {
     if( s == "<en>" )
-        return ITextToSpeech::EN;
+        return lang_e::EN;
     if( s == "<de>" )
-        return ITextToSpeech::DE;
+        return lang_e::DE;
     if( s == "<ru>" )
-        return ITextToSpeech::RU;
+        return lang_e::RU;
 
-    return ITextToSpeech::UNKNOWN;
+    return lang_e::UNKNOWN;
 }
 
-std::string GSpeak::get_locale_name( ITextToSpeech::lang_e lang )
+std::string GSpeak::get_locale_name( lang_e lang )
 {
     static const std::string def  = "en_GB.UTF-8";
     static const std::string en  = "en_GB.UTF-8";
@@ -300,13 +311,13 @@ std::string GSpeak::get_locale_name( ITextToSpeech::lang_e lang )
     static const std::string ru  = "ru_RU.UTF-8";
     switch( lang )
     {
-    case ITextToSpeech::UNKNOWN:
+    case lang_e::UNKNOWN:
         return def;
-    case ITextToSpeech::EN:
+    case lang_e::EN:
         return en;
-    case ITextToSpeech::DE:
+    case lang_e::DE:
         return de;
-    case ITextToSpeech::RU:
+    case lang_e::RU:
         return ru;
     default:
         break;
@@ -334,15 +345,15 @@ void GSpeak::localize( WordLocale & w )
     }
 }
 
-bool GSpeak::convert_words_to_tokens( const StrVect & inp, TokenVect & outp )
+bool GSpeak::convert_words_to_tokens( const StrVect & inp, TokenVect & outp, lang_e lang_def )
 {
-    ITextToSpeech::lang_e lang = ITextToSpeech::EN;
+    lang_e lang = lang_def;
 
     for( auto s : inp )
     {
-        ITextToSpeech::lang_e l = check_lang( s );
+        lang_e l = check_lang( s );
 
-        if( l != ITextToSpeech::lang_e::UNKNOWN )
+        if( l != lang_e::UNKNOWN )
         {
             lang = l;
             continue;   // don't generate a word since it's a keyword
@@ -359,7 +370,7 @@ bool GSpeak::convert_words_to_tokens( const StrVect & inp, TokenVect & outp )
 
         if( id == 0 )
         {
-            dummy_log( 0, MODULENAME, "ERROR: cannot get id for word '%s'", s.c_str() );
+            dummy_log_error( MODULENAME, "cannot get id for word '%s'", s.c_str() );
             return false;
         }
 

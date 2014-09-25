@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak_serial.cpp 1000 2014-08-29 18:15:22Z serge $
+// $Id: gspeak_serial.cpp 1063 2014-09-23 16:10:45Z serge $
 
 
 #include "gspeak.h"           // self
@@ -60,7 +60,7 @@ bool GSpeak::save_state__()
 
     boost::archive::text_oarchive oa( ofs );
 
-    std::cout << "size = " << id_to_word_.size() << "\n";
+    dummy_log_debug( MODULENAME, "size = %u", id_to_word_.size() );
 
     oa << BOOST_SERIALIZATION_NVP( id_to_word_ );
 
@@ -77,7 +77,7 @@ bool GSpeak::load_state__()
 
         oa >> BOOST_SERIALIZATION_NVP( id_to_word_ );
 
-        std::cout << "load size = " << id_to_word_.size() << "\n";
+        dummy_log_debug( MODULENAME, "load size = %u", id_to_word_.size() );
 
         return true;
     }
