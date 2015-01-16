@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.h 1081 2014-09-25 17:16:43Z serge $
+// $Revision: 1404 $ $Date:: 2015-01-16 #$ $Author: serge $
 
 #ifndef GSPEAK_H
 #define GSPEAK_H
@@ -56,8 +56,8 @@ public:
     struct WordLocale
     {
 
-        lang_e          lang;
-        std::string     word;
+        lang_tools::lang_e  lang;
+        std::string         word;
 
         bool operator<( const WordLocale & rh ) const
         {
@@ -75,8 +75,8 @@ public:
     {
         //friend class boost::serialization::access;
 
-        uint32          id;
-        lang_e          lang;
+        uint32              id;
+        lang_tools::lang_e  lang;
 
         bool operator<( const Token & rh ) const
         {
@@ -105,7 +105,7 @@ public:
     bool save_state();
 
     // interface of ITextToSpeech
-    bool say( const std::string & text, const std::string & filename, lang_e lang = lang_e::EN );
+    bool say( const std::string & text, const std::string & filename, lang_tools::lang_e lang = lang_tools::lang_e::EN );
     std::string get_error_msg() const;
 
 
@@ -119,7 +119,7 @@ private:
 
     void set_error_msg__( const std::string & s );
 
-    bool convert_words_to_tokens( const StrVect & inp, TokenVect & outp, lang_e lang );
+    bool convert_words_to_tokens( const StrVect & inp, TokenVect & outp, lang_tools::lang_e lang );
 
     bool say_text( const TokenVect & inp, const std::string & wav_file );
 
@@ -129,7 +129,7 @@ private:
 
     static void localize( WordLocale & w );
 
-    static std::string get_locale_name( lang_e lang );
+    static std::string get_locale_name( lang_tools::lang_e lang );
 
     bool add_new_word( const WordLocale & w, uint32 id );
 
@@ -140,7 +140,7 @@ private:
 
     bool say_word( const Token & t, const std::string & mp3_file );
 
-    static lang_e   check_lang( const std::string & s );
+    static lang_tools::lang_e   check_lang( const std::string & s );
 
 public:
 

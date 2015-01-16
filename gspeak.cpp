@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gspeak.cpp 1081 2014-09-25 17:16:43Z serge $
+// $Revision: 1404 $ $Date:: 2015-01-16 #$ $Author: serge $
 
 
 #include "gspeak.h"           // self
@@ -54,13 +54,13 @@ class StrHelper
 {
 public:
 
-static std::string to_string( lang_e l )
+static std::string to_string( lang_tools::lang_e l )
 {
-    if( l == lang_e::EN )
+    if( l == lang_tools::lang_e::EN )
         return "en";
-    else if( l == lang_e::DE )
+    else if( l == lang_tools::lang_e::DE )
         return "de";
-    else if( l == lang_e::RU )
+    else if( l == lang_tools::lang_e::RU )
         return "ru";
     return "UNDEF";
 }
@@ -151,7 +151,7 @@ bool GSpeak::is_inited__() const
     return is_inited_;
 }
 
-bool GSpeak::say( const std::string & text, const std::string & filename, lang_e lang )
+bool GSpeak::say( const std::string & text, const std::string & filename, lang_tools::lang_e lang )
 {
     SCOPE_LOCK( mutex_ );
 
@@ -291,19 +291,19 @@ std::string GSpeak::get_filename_mp3( const Token & t ) const
 }
 
 
-lang_e   GSpeak::check_lang( const std::string & s )
+lang_tools::lang_e   GSpeak::check_lang( const std::string & s )
 {
     if( s == "<en>" )
-        return lang_e::EN;
+        return lang_tools::lang_e::EN;
     if( s == "<de>" )
-        return lang_e::DE;
+        return lang_tools::lang_e::DE;
     if( s == "<ru>" )
-        return lang_e::RU;
+        return lang_tools::lang_e::RU;
 
-    return lang_e::UNKNOWN;
+    return lang_tools::lang_e::UNDEF;
 }
 
-std::string GSpeak::get_locale_name( lang_e lang )
+std::string GSpeak::get_locale_name( lang_tools::lang_e lang )
 {
     static const std::string def  = "en_GB.UTF-8";
     static const std::string en  = "en_GB.UTF-8";
@@ -311,13 +311,13 @@ std::string GSpeak::get_locale_name( lang_e lang )
     static const std::string ru  = "ru_RU.UTF-8";
     switch( lang )
     {
-    case lang_e::UNKNOWN:
+    case lang_tools::lang_e::UNDEF:
         return def;
-    case lang_e::EN:
+    case lang_tools::lang_e::EN:
         return en;
-    case lang_e::DE:
+    case lang_tools::lang_e::DE:
         return de;
-    case lang_e::RU:
+    case lang_tools::lang_e::RU:
         return ru;
     default:
         break;
@@ -345,15 +345,15 @@ void GSpeak::localize( WordLocale & w )
     }
 }
 
-bool GSpeak::convert_words_to_tokens( const StrVect & inp, TokenVect & outp, lang_e lang_def )
+bool GSpeak::convert_words_to_tokens( const StrVect & inp, TokenVect & outp, lang_tools::lang_e lang_def )
 {
-    lang_e lang = lang_def;
+    lang_tools::lang_e lang = lang_def;
 
     for( auto s : inp )
     {
-        lang_e l = check_lang( s );
+        lang_tools::lang_e l = check_lang( s );
 
-        if( l != lang_e::UNKNOWN )
+        if( l != lang_tools::lang_e::UNDEF )
         {
             lang = l;
             continue;   // don't generate a word since it's a keyword

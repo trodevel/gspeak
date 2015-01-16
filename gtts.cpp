@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gtts.cpp 1075 2014-09-25 16:39:47Z serge $
+// $Revision: 1404 $ $Date:: 2015-01-16 #$ $Author: serge $
 
 
 #include "gtts.h"           // self
@@ -64,7 +64,7 @@ const std::string Gtts::prepare_url( const std::string & text, const std::string
     return s.str();
 }
 
-bool Gtts::say( const std::string & text, const std::string & filename, lang_e lang )
+bool Gtts::say( const std::string & text, const std::string & filename, lang_tools::lang_e lang )
 {
     std::string text_no_sp = escape_string( text );
 
@@ -87,7 +87,7 @@ bool Gtts::say( const std::string & text, const std::string & filename, lang_e l
     return b;
 }
 
-const std::string & Gtts::to_string( lang_e l )
+const std::string & Gtts::to_string( lang_tools::lang_e l )
 {
     static std::string en( "en" );
     static std::string de( "de" );
@@ -95,11 +95,11 @@ const std::string & Gtts::to_string( lang_e l )
 
     switch( l )
     {
-    case lang_e::EN:
+    case lang_tools::lang_e::EN:
         return en;
-    case lang_e::DE:
+    case lang_tools::lang_e::DE:
         return de;
-    case lang_e::RU:
+    case lang_tools::lang_e::RU:
         return ru;
     default:
         break;

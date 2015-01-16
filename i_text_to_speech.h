@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: i_text_to_speech.h 1075 2014-09-25 16:39:47Z serge $
+// $Revision: 1404 $ $Date:: 2015-01-16 #$ $Author: serge $
 
 
 #ifndef I_TEXT_TO_SPEECH_H
@@ -27,26 +27,19 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>                   // std::string
 #include "../utils/types.h"         // uint32
+#include "../lang_tools/language_enum.h"      // lang_e
 
 #include "namespace_gspeak.h"       // NAMESPACE_GSPEAK_START
 
 NAMESPACE_GSPEAK_START
-
-enum class lang_e
-{
-    UNKNOWN     = 0,
-    EN,
-    DE,
-    RU
-};
 
 class ITextToSpeech
 {
 public:
     virtual ~ITextToSpeech() {};
 
-    virtual bool say( const std::string & text, const std::string & filename, lang_e lang ) = 0;
-    virtual std::string get_error_msg() const                                               = 0;
+    virtual bool say( const std::string & text, const std::string & filename, lang_tools::lang_e lang ) = 0;
+    virtual std::string get_error_msg() const                                                           = 0;
 };
 
 NAMESPACE_GSPEAK_END

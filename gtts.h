@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: gtts.h 378 2014-04-16 17:13:59Z serge $
+// $Revision: 1404 $ $Date:: 2015-01-16 #$ $Author: serge $
 
 #ifndef GTTS_H
 #define GTTS_H
@@ -43,14 +43,14 @@ public:
 
     ~Gtts();
 
-    bool say( const std::string & text, const std::string & filename, lang_e lang = lang_e::EN );
+    bool say( const std::string & text, const std::string & filename, lang_tools::lang_e lang = lang_tools::lang_e::EN );
     std::string get_error_msg() const;
 
 private:
 
     static const std::string escape_string( const std::string & s );
     static const std::string prepare_url( const std::string & text, const std::string & lang );
-    static const std::string& to_string( lang_e l );
+    static const std::string& to_string( lang_tools::lang_e l );
 
 public:
 
