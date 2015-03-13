@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1404 $ $Date:: 2015-01-16 #$ $Author: serge $
+// $Revision: 1574 $ $Date:: 2015-03-12 #$ $Author: serge $
 
 #ifndef GSPEAK_H
 #define GSPEAK_H
@@ -35,7 +35,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "i_text_to_speech.h"       // ITextToSpeech
 
-#include "namespace_gspeak.h"  // NAMESPACE_GSPEAK_START
+#include "namespace_lib.h"  // NAMESPACE_GSPEAK_START
 
 
 NAMESPACE_GSPEAK_START
@@ -116,6 +116,8 @@ private:
     bool save_state__();
 
     bool load_state__();
+
+    bool parse_line_and_insert__( const std::string & s, uint32 line_num );
 
     void set_error_msg__( const std::string & s );
 

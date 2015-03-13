@@ -19,74 +19,111 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1404 $ $Date:: 2015-01-16 #$ $Author: serge $
+// $Revision: 1577 $ $Date:: 2015-03-12 #$ $Author: serge $
 
 
 #include "gspeak.h"           // self
 
-#include <boost/bind.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/map.hpp>
-
 #include <sstream>                  // std::ostringstream
 #include <fstream>                  // std::ofstream
+#include <limits>                   // std::numeric_limits
 
 #include "../utils/dummy_logger.h"      // dummy_log
-#include "../utils/wrap_mutex.h"        // SCOPE_LOCK
-
-#include "namespace_gspeak.h"       // NAMESPACE_GSPEAK_START
+#include "../utils/trim.h"              // trim
 
 #define MODULENAME      "GSpeak"
 
-namespace boost {
-namespace serialization {
+NAMESPACE_GSPEAK_START
 
-template<class Archive>
-void serialize( Archive & ar, gspeak::GSpeak::Token & g, const unsigned int version )
+std::ofstream & operator <<( std::ofstream & os, const GSpeak::Token & t )
 {
-    ar & g.id;
-    ar & g.lang;
+    os << t.id << " " << static_cast<unsigned int>( t.lang );
+
+    return os;
 }
 
-} // namespace serialization
-} // namespace boost
+std::ofstream & operator <<( std::ofstream & os, const GSpeak::MapTokenToString::value_type & v )
+{
+    os << v.first << " " << v.second << std::endl;
 
-NAMESPACE_GSPEAK_START
+    return os;
+}
 
 bool GSpeak::save_state__()
 {
     std::ofstream ofs( config_.word_base_path );
 
-    boost::archive::text_oarchive oa( ofs );
+    for( const auto & e : id_to_word_ )
+    {
+        ofs << e;
+    }
 
-    dummy_log_debug( MODULENAME, "size = %u", id_to_word_.size() );
-
-    oa << BOOST_SERIALIZATION_NVP( id_to_word_ );
+    dummy_log_debug( MODULENAME, "saved words = %u", id_to_word_.size() );
 
     return true;
 }
 
 bool GSpeak::load_state__()
 {
-    try
+    std::ifstream in_file( config_.word_base_path.c_str() );
+    std::string line;
+
+    if( in_file.is_open() == false )
     {
-        std::ifstream fs( config_.word_base_path );
+        dummy_log_error( MODULENAME, "cannot open file %s", config_.word_base_path.c_str() );
 
-        boost::archive::text_iarchive oa( fs );
+        return false;
+    }
 
-        oa >> BOOST_SERIALIZATION_NVP( id_to_word_ );
+    uint32 line_num = 0;
 
-        dummy_log_debug( MODULENAME, "load size = %u", id_to_word_.size() );
+    while( in_file.good() )
+    {
+        std::getline( in_file, line );
 
+        line_num++;
+
+        bool b = parse_line_and_insert__( line, line_num );
+
+        if( b == false )
+            dummy_log_warn( MODULENAME, "cannot parse record '%s' at line %u", line.c_str(), line_num );
+    }
+
+    in_file.close();
+
+    dummy_log_debug( MODULENAME, "loaded words = %u", id_to_word_.size() );
+
+    return true;
+}
+
+bool GSpeak::parse_line_and_insert__( const std::string & si, uint32 line_num )
+{
+    std::string s( si );
+
+    trim( s );
+
+    if( s.empty() )
         return true;
-    }
-    catch( std::exception & e )
-    {
-        set_error_msg__( std::string( "got exception " ) + e.what() );
-    }
 
-    return false;
+    std::istringstream iss( s );
+
+    WordLocale w;
+    uint32 id;
+
+    uint32  lang_int;
+
+    iss >> id;
+    iss >> lang_int;
+    std::getline( iss, w.word );
+
+    trim( w.word );
+
+    if( w.word.empty() )
+        return false;
+
+    w.lang  = static_cast< lang_tools::lang_e >( lang_int );
+
+    return add_new_word( w, id );
 }
 
 NAMESPACE_GSPEAK_END

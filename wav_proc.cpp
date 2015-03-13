@@ -19,17 +19,17 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1404 $ $Date:: 2015-01-16 #$ $Author: serge $
+// $Revision: 1573 $ $Date:: 2015-03-12 #$ $Author: serge $
 
 
-#include "wav_proc.h"           // self
+#include "wav_proc.h"               // self
 
 #include <sstream>                  // std::ostringstream
 #include <cstdlib>                  // system
 
-#include "../utils/dummy_logger.h"      // dummy_log
+#include "../utils/dummy_logger.h"  // dummy_log
 
-#include "namespace_gspeak.h"       // NAMESPACE_GSPEAK_START
+#include "namespace_lib.h"          // NAMESPACE_GSPEAK_START
 
 #define MODULENAME      "wav_proc"
 
@@ -43,7 +43,7 @@ bool convert_mp3_to_wav( const std::string & inp, const std::string & outp )
         "#/bin/bash \n" <<
         "sox -t mp3 " << inp << " -t wav " << outp;
 
-    dummy_log( 0, MODULENAME, "DBG: executing: %s", s.str().c_str() );
+    dummy_log_debug( MODULENAME, "executing: %s", s.str().c_str() );
 
     system( s.str().c_str() );
 
@@ -77,7 +77,7 @@ bool join_wav_files( const std::vector< std::string > & inp, const std::string &
         s << outp;
     }
 
-    dummy_log( 0, MODULENAME, "DBG: executing: %s", s.str().c_str() );
+    dummy_log_debug( MODULENAME, "executing: %s", s.str().c_str() );
 
     system( s.str().c_str() );
 
@@ -101,7 +101,7 @@ bool append_wav_file( const std::string & base, const std::string & addition )
         "sox " << base << " " << addition << " " << tmp << "\n"
         "mv " << tmp << " " << base;
 
-    dummy_log( 0, MODULENAME, "DBG: executing: %s", s.str().c_str() );
+    dummy_log_debug( MODULENAME, "executing: %s", s.str().c_str() );
 
     system( s.str().c_str() );
 

@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1404 $ $Date:: 2015-01-16 #$ $Author: serge $
+// $Revision: 1573 $ $Date:: 2015-03-12 #$ $Author: serge $
 
 #ifndef WAV_PROC_H
 #define WAV_PROC_H
@@ -27,7 +27,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <string>                   // std::string
 #include <boost/thread.hpp>         // boost::mutex
 
-#include "namespace_gspeak.h"  // NAMESPACE_GSPEAK_START
+#include "namespace_lib.h"  // NAMESPACE_GSPEAK_START
 
 
 NAMESPACE_GSPEAK_START

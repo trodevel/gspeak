@@ -3,9 +3,13 @@
 
 #include "gspeak.h"         // GSpeak
 
+#include "../utils/dummy_logger.h"          // dummy_log_set_log_level
+
 int main()
 {
     printf( "Hello, world\n" );
+
+    dummy_logger::set_log_level( log_levels_log4j::DEBUG );
 
     std::string input;
 

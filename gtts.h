@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1404 $ $Date:: 2015-01-16 #$ $Author: serge $
+// $Revision: 1573 $ $Date:: 2015-03-12 #$ $Author: serge $
 
 #ifndef GTTS_H
 #define GTTS_H
@@ -29,7 +29,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "i_text_to_speech.h"       // IGtts
 
-#include "namespace_gspeak.h"  // NAMESPACE_GSPEAK_START
+#include "namespace_lib.h"  // NAMESPACE_GSPEAK_START
 
 
 NAMESPACE_GSPEAK_START
