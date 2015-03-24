@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1573 $ $Date:: 2015-03-12 #$ $Author: serge $
+// $Revision: 1604 $ $Date:: 2015-03-23 #$ $Author: serge $
 
 
 #include "wav_proc.h"               // self
@@ -28,6 +28,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>                  // system
 
 #include "../utils/dummy_logger.h"  // dummy_log
+#include "../wave/wave.h"           // Wave
 
 #include "namespace_lib.h"          // NAMESPACE_GSPEAK_START
 
@@ -57,53 +58,26 @@ bool join_wav_files( const std::vector< std::string > & inp, const std::string &
 
     std::ostringstream s;
 
-    if( inp.size() == 1 )
+    try
     {
-        s <<
-            "#/bin/bash \n"
-            "cp " << inp[0] << " " << outp;
-    }
-    else
-    {
-        s <<
-            "#/bin/bash \n"
-            "sox ";
+        Wave res;
 
-        for( auto str : inp )
+        for( auto & str : inp )
         {
             s << str << " ";
+
+            res += str;
         }
 
-        s << outp;
+        res.save( outp );
+
+        dummy_log_debug( MODULENAME, "joined %s into %s", s.str().c_str(), outp.c_str() );
     }
-
-    dummy_log_debug( MODULENAME, "executing: %s", s.str().c_str() );
-
-    system( s.str().c_str() );
-
-    return true;
-}
-
-bool append_wav_file( const std::string & base, const std::string & addition )
-{
-    if( base.empty() )
+    catch( std::exception &e )
+    {
+        dummy_log_error( MODULENAME, "cannot join WAV files: %s", s.str().c_str() );
         return false;
-
-    if( addition.empty() )
-        return false;
-
-    std::string tmp = base + ".tmp.wav";
-
-    std::ostringstream s;
-
-    s <<
-        "#/bin/bash \n"
-        "sox " << base << " " << addition << " " << tmp << "\n"
-        "mv " << tmp << " " << base;
-
-    dummy_log_debug( MODULENAME, "executing: %s", s.str().c_str() );
-
-    system( s.str().c_str() );
+    }
 
     return true;
 }
