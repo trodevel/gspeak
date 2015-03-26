@@ -26,7 +26,7 @@ BOOST_LIB_NAMES := boost_system boost_thread boost_filesystem boost_locale
 BOOST_LIBS = $(patsubst %,$(BOOST_LIB_PATH)/lib%.a,$(BOOST_LIB_NAMES))
 
 
-EXT_LIBS=-lcurl $(BOOST_LIBS)
+EXT_LIBS=-lcurl -lmp3lame $(BOOST_LIBS)
 
 ###################################################################
 
@@ -84,7 +84,7 @@ EXE=
 SRCC = gtts.cpp gspeak.cpp wav_proc.cpp gspeak_serial.cpp str_proc.cpp
 OBJS = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRCC))
 
-LIB_NAMES = utils wave
+LIB_NAMES = utils wave convimp3 lameplus
 LIBS = $(patsubst %,$(BINDIR)/lib%.a,$(LIB_NAMES))
 
 all: static
@@ -120,6 +120,14 @@ $(BINDIR)/lib%.a: %		# somehow this rule doesn't work
 $(BINDIR)/libutils.a:
 	cd ../utils; make; cd $(project)
 	ln -sf ../../utils/$@ $(BINDIR)
+
+$(BINDIR)/libconvimp3.a:
+	cd ../convimp3; make; cd $(project)
+	ln -sf ../../convimp3/$@ $(BINDIR)
+
+$(BINDIR)/liblameplus.a:
+	cd ../lameplus; make; cd $(project)
+	ln -sf ../../lameplus/$@ $(BINDIR)
 
 $(BINDIR)/libwave.a:
 	cd ../wave; make; cd $(project)

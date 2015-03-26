@@ -19,16 +19,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1604 $ $Date:: 2015-03-23 #$ $Author: serge $
+// $Revision: 1647 $ $Date:: 2015-03-25 #$ $Author: serge $
 
 
 #include "wav_proc.h"               // self
 
 #include <sstream>                  // std::ostringstream
-#include <cstdlib>                  // system
 
 #include "../utils/dummy_logger.h"  // dummy_log
-#include "../wave/wave.h"           // Wave
+#include "../wave/wave.h"           // wave::Wave
+#include "../convimp3/codec.h"      // convimp3::decode
 
 #include "namespace_lib.h"          // NAMESPACE_GSPEAK_START
 
@@ -38,15 +38,23 @@ NAMESPACE_GSPEAK_START
 
 bool convert_mp3_to_wav( const std::string & inp, const std::string & outp )
 {
-    std::ostringstream s;
+    try
+    {
+        bool b = convimp3::Codec::decode( inp.c_str(), outp.c_str() );
 
-    s <<
-        "#/bin/bash \n" <<
-        "sox -t mp3 " << inp << " -t wav " << outp;
+        if( b == false )
+        {
+            dummy_log_error( MODULENAME, "cannot convert %s into %s", inp.c_str(), outp.c_str() );
 
-    dummy_log_debug( MODULENAME, "executing: %s", s.str().c_str() );
+            return false;
+        }
+    }
+    catch( std::exception & e )
+    {
+        dummy_log_error( MODULENAME, "exception: cannot convert %s into %s, %s", inp.c_str(), outp.c_str(), e.what() );
 
-    system( s.str().c_str() );
+        return false;
+    }
 
     return true;
 }
@@ -60,7 +68,7 @@ bool join_wav_files( const std::vector< std::string > & inp, const std::string &
 
     try
     {
-        Wave res;
+        wave::Wave res;
 
         for( auto & str : inp )
         {
