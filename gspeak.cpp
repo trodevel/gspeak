@@ -19,12 +19,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1573 $ $Date:: 2015-03-12 #$ $Author: serge $
+// $Revision: 1722 $ $Date:: 2015-04-23 #$ $Author: serge $
 
 
 #include "gspeak.h"           // self
 
-#include <boost/bind.hpp>
 #include <boost/filesystem.hpp>     // boost::filesystem::exists
 #include <boost/locale.hpp>         // boost::locale
 #include <sstream>                  // std::ostringstream
@@ -34,7 +33,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <boost/functional/hash.hpp>    // boost::hash_combine
 
 #include "../utils/dummy_logger.h"      // dummy_log
-#include "../utils/wrap_mutex.h"        // SCOPE_LOCK
+#include "../utils/mutex_helper.h"      // MUTEX_SCOPE_LOCK
 #include "../utils/tokenizer.h"         // tokenize_to_vector
 #include "wav_proc.h"                   // convert_mp3_to_wav
 #include "str_proc.h"                   // split_into_sentences
@@ -95,7 +94,7 @@ GSpeak::~GSpeak()
 
 bool GSpeak::init( const Config & config )
 {
-    SCOPE_LOCK( mutex_ );
+    MUTEX_SCOPE_LOCK( mutex_ );
 
     if( is_inited__() == true )
     {
@@ -135,7 +134,7 @@ bool GSpeak::init( const Config & config )
 
 bool GSpeak::save_state()
 {
-    SCOPE_LOCK( mutex_ );
+    MUTEX_SCOPE_LOCK( mutex_ );
 
     if( !is_inited__() )
     {
@@ -153,7 +152,7 @@ bool GSpeak::is_inited__() const
 
 bool GSpeak::say( const std::string & text, const std::string & filename, lang_tools::lang_e lang )
 {
-    SCOPE_LOCK( mutex_ );
+    MUTEX_SCOPE_LOCK( mutex_ );
 
     if( !is_inited__() )
     {
@@ -179,7 +178,7 @@ bool GSpeak::say( const std::string & text, const std::string & filename, lang_t
 
 std::string GSpeak::get_error_msg() const
 {
-    SCOPE_LOCK( mutex_ );
+    MUTEX_SCOPE_LOCK( mutex_ );
 
     return error_msg_;
 }

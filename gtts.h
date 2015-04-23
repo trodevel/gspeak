@@ -19,13 +19,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1573 $ $Date:: 2015-03-12 #$ $Author: serge $
+// $Revision: 1722 $ $Date:: 2015-04-23 #$ $Author: serge $
 
 #ifndef GTTS_H
 #define GTTS_H
 
 #include <string>                   // std::string
-#include <boost/thread.hpp>         // boost::mutex
+#include <mutex>                    // std::mutex
 
 #include "i_text_to_speech.h"       // IGtts
 
@@ -56,7 +56,7 @@ public:
 
 
 private:
-    mutable boost::mutex        mutex_;
+    mutable std::mutex          mutex_;
 
     std::string                 error_msg_;
 };

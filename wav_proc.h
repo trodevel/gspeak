@@ -19,13 +19,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1603 $ $Date:: 2015-03-23 #$ $Author: serge $
+// $Revision: 1722 $ $Date:: 2015-04-23 #$ $Author: serge $
 
 #ifndef WAV_PROC_H
 #define WAV_PROC_H
 
-#include <string>                   // std::string
-#include <boost/thread.hpp>         // boost::mutex
+#include <string>           // std::string
+#include <vector>           // std::vector
 
 #include "namespace_lib.h"  // NAMESPACE_GSPEAK_START
 

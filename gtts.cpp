@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1573 $ $Date:: 2015-03-12 #$ $Author: serge $
+// $Revision: 1722 $ $Date:: 2015-04-23 #$ $Author: serge $
 
 
 #include "gtts.h"           // self
@@ -29,7 +29,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <boost/algorithm/string/replace.hpp>   // replace_all_copy
 
 #include "../utils/dummy_logger.h"      // dummy_log
-#include "../utils/wrap_mutex.h"        // SCOPE_LOCK
+#include "../utils/mutex_helper.h"      // MUTEX_SCOPE_LOCK
 #include "../utils/HTTPDownloader.hpp"  // HTTPDownloader
 
 #include "namespace_lib.h"       // NAMESPACE_GSPEAK_START

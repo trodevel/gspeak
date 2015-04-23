@@ -19,13 +19,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1574 $ $Date:: 2015-03-12 #$ $Author: serge $
+// $Revision: 1722 $ $Date:: 2015-04-23 #$ $Author: serge $
 
 #ifndef GSPEAK_H
 #define GSPEAK_H
 
 #include <string>                   // std::string
-#include <boost/thread.hpp>         // boost::mutex
+#include <mutex>                    // std::mutex
 
 #include <map>                      // std::map
 #include <vector>                   // std::vector
@@ -148,7 +148,7 @@ public:
 
 
 private:
-    mutable boost::mutex        mutex_;
+    mutable std::mutex          mutex_;
 
     bool                        is_inited_;
 
