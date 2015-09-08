@@ -1,6 +1,6 @@
 /*
 
-Cache over Gtts.
+Simple wrapper over Google Translate TTS engine
 
 Copyright (C) 2014 Sergey Kolevatov
 
@@ -19,72 +19,19 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1722 $ $Date:: 2015-04-23 #$ $Author: serge $
+// $Revision: 2531 $ $Date:: 2015-09-09 #$ $Author: serge $
 
 
-#include "gspeak.h"           // self
+#include "gspeak.h"                 // self
 
-#include <boost/filesystem.hpp>     // boost::filesystem::exists
-#include <boost/locale.hpp>         // boost::locale
 #include <sstream>                  // std::ostringstream
-#include <locale>                   // std::locale
-#include <set>                      // std::set
+#include <boost/algorithm/string/replace.hpp>   // replace_all_copy
 
-#include <boost/functional/hash.hpp>    // boost::hash_combine
+#include "../utils/HTTPDownloader.hpp"  // HTTPDownloader
 
-#include "../utils/dummy_logger.h"      // dummy_log
-#include "../utils/mutex_helper.h"      // MUTEX_SCOPE_LOCK
-#include "../utils/tokenizer.h"         // tokenize_to_vector
-#include "wav_proc.h"                   // convert_mp3_to_wav
-#include "str_proc.h"                   // split_into_sentences
+using namespace gspeak;
 
-#include "namespace_lib.h"       // NAMESPACE_GSPEAK_START
-
-#define MODULENAME      "GSpeak"
-
-NAMESPACE_GSPEAK_START
-
-bool file_exist( const std::string& name )
-{
-     return boost::filesystem::exists( name );
-}
-
-class StrHelper
-{
-public:
-
-static std::string to_string( lang_tools::lang_e l )
-{
-    if( l == lang_tools::lang_e::EN )
-        return "en";
-    else if( l == lang_tools::lang_e::DE )
-        return "de";
-    else if( l == lang_tools::lang_e::RU )
-        return "ru";
-    return "UNDEF";
-}
-
-static std::string to_string( const GSpeak::WordLocale & w )
-{
-    std::ostringstream s;
-
-    s << w.word << " " << to_string( w.lang );
-
-    return s.str();
-}
-
-static std::string to_string( const GSpeak::Token & t )
-{
-    std::ostringstream s;
-
-    s << t.id << " " << to_string( t.lang );
-
-    return s.str();
-}
-};
-
-GSpeak::GSpeak():
-    is_inited_( false )
+GSpeak::GSpeak()
 {
 }
 
@@ -92,345 +39,36 @@ GSpeak::~GSpeak()
 {
 }
 
-bool GSpeak::init( const Config & config )
+const std::string GSpeak::escape_string( const std::string & s )
 {
-    MUTEX_SCOPE_LOCK( mutex_ );
+    std::string res = boost::replace_all_copy<std::string>( s, " ", "+" );
 
-    if( is_inited__() == true )
-    {
-        dummy_log_error( MODULENAME, "already inited" );
-        return false;
-    }
+    boost::replace_all( res, "\"", "\\\"" );
 
-    if( config.word_base_path.empty() )
-    {
-        dummy_log_error( MODULENAME, "word base path is empty" );
-        return false;
-    }
-
-    if( config.data_path.empty() )
-    {
-        dummy_log_error( MODULENAME, "data path is empty" );
-        return false;
-    }
-
-    if( config.temp_path.empty() )
-    {
-        dummy_log_error( MODULENAME, "temp path is empty" );
-        return false;
-    }
-
-    config_ = config;
-
-    if( false == load_state__() )
-    {
-        dummy_log_warn( MODULENAME, "cannot load state" );
-    }
-
-    is_inited_  = true;
-
-    return true;
+    return res;
 }
 
-bool GSpeak::save_state()
-{
-    MUTEX_SCOPE_LOCK( mutex_ );
-
-    if( !is_inited__() )
-    {
-        dummy_log_error( MODULENAME, "not inited" );
-        return false;
-    }
-
-    return save_state__();
-}
-
-bool GSpeak::is_inited__() const
-{
-    return is_inited_;
-}
-
-bool GSpeak::say( const std::string & text, const std::string & filename, lang_tools::lang_e lang )
-{
-    MUTEX_SCOPE_LOCK( mutex_ );
-
-    if( !is_inited__() )
-    {
-        dummy_log_error( MODULENAME, "not inited" );
-        return false;
-    }
-
-    std::vector< std::string > words;
-
-    split_into_sentences( words, text );
-
-    if( words.empty() )
-        return true;
-
-    TokenVect ids;
-
-    convert_words_to_tokens( words, ids, lang );
-
-    say_text( ids, filename );
-
-    return true;
-}
-
-std::string GSpeak::get_error_msg() const
-{
-    MUTEX_SCOPE_LOCK( mutex_ );
-
-    return error_msg_;
-}
-
-void GSpeak::set_error_msg__( const std::string & s )
-{
-    error_msg_  = s;
-}
-
-bool GSpeak::say_text( const TokenVect & inp, const std::string & wav_file )
-{
-    TokenVect::const_iterator it_end    = inp.end();
-    TokenVect::const_iterator it        = inp.begin();
-
-    StrVect wav_files;
-
-    for( ; it != it_end; ++it )
-    {
-
-        std::string file;
-
-        const Token & t    = *it;
-
-        bool b = generate_wav_file( t, file );
-
-        if( b == false )
-        {
-            dummy_log_error( MODULENAME, "cannot generate wav file for token %s", StrHelper::to_string( t ).c_str() );
-            return false;
-        }
-
-        wav_files.push_back( file );
-    }
-
-    join_wav_files( wav_files, wav_file );
-
-    return true;
-}
-
-bool GSpeak::generate_wav_file( const Token & t, std::string & wav_file )
-{
-    std::string f_wav   = get_filename_wav( t );
-
-    if( file_exist( f_wav ) )
-    {
-        // wav file already exists, nothing to do
-
-        wav_file    = f_wav;
-        return true;
-    }
-
-    std::string f_mp3   = get_filename_mp3( t );
-
-    if( file_exist( f_mp3 ) )
-    {
-        // mp3 file exists, just convert it into wav
-
-        bool b = convert_mp3_to_wav( f_mp3, f_wav );
-
-        if( b == false )
-        {
-            dummy_log_error( MODULENAME, "cannot convert mp3 file to wav for token %s", StrHelper::to_string( t ).c_str() );
-            return false;
-        }
-
-        wav_file    = f_wav;
-        return true;
-    }
-
-    // nothing exists, need to generate mp3 and then convert to wav
-
-    bool b1 = say_word( t, f_mp3 );
-
-    if( b1 == false )
-    {
-        dummy_log_error( MODULENAME, "cannot generate mp3 file for token %s", StrHelper::to_string( t ).c_str() );
-        return false;
-    }
-
-    bool b2 = convert_mp3_to_wav( f_mp3, f_wav );
-
-    if( b2 == false )
-    {
-        dummy_log_error( MODULENAME, "cannot convert mp3 file to wav for token %s", StrHelper::to_string( t ).c_str() );
-        return false;
-    }
-
-    wav_file    = f_wav;
-
-    return true;
-}
-
-std::string GSpeak::get_filename_wav( const Token & t ) const
+const std::string GSpeak::prepare_url( const std::string & text, const std::string & lang )
 {
     std::ostringstream s;
 
-    s << config_.temp_path << "/" << t.id << ".wav";
+    s << "http://translate.google.com/translate_tts?ie=UTF-8&tl=" << lang << "&q=" << text << "&client=t";
 
     return s.str();
 }
 
-std::string GSpeak::get_filename_mp3( const Token & t ) const
+bool GSpeak::say( const std::string & text, const std::string & filename, const std::string & lang, std::string & error )
 {
-    std::ostringstream s;
+    std::string text_no_sp = escape_string( text );
 
-    s << config_.data_path << "/" << t.id << ".mp3";
+    std::string url = prepare_url( text_no_sp, lang );
 
-    return s.str();
+    HTTPDownloader h;
+
+    static const std::string agent("Mozilla/5.0 (X11; Linux x86_64; rv:39.0) Gecko/20100101 Firefox/39.0)");
+
+    bool b = h.download_file( url, filename, error, agent );
+
+    return b;
 }
 
-
-lang_tools::lang_e   GSpeak::check_lang( const std::string & s )
-{
-    if( s == "<en>" )
-        return lang_tools::lang_e::EN;
-    if( s == "<de>" )
-        return lang_tools::lang_e::DE;
-    if( s == "<ru>" )
-        return lang_tools::lang_e::RU;
-
-    return lang_tools::lang_e::UNDEF;
-}
-
-std::string GSpeak::get_locale_name( lang_tools::lang_e lang )
-{
-    static const std::string def  = "en_GB.UTF-8";
-    static const std::string en  = "en_GB.UTF-8";
-    static const std::string de  = "de_DE.UTF-8";
-    static const std::string ru  = "ru_RU.UTF-8";
-    switch( lang )
-    {
-    case lang_tools::lang_e::UNDEF:
-        return def;
-    case lang_tools::lang_e::EN:
-        return en;
-    case lang_tools::lang_e::DE:
-        return de;
-    case lang_tools::lang_e::RU:
-        return ru;
-    default:
-        break;
-    }
-
-    return def;
-
-}
-
-void GSpeak::localize( WordLocale & w )
-{
-    try
-    {
-        boost::locale::generator gen;
-        std::locale loc = gen( "" );
-
-        // Create system default locale
-        std::locale::global( loc );
-
-        w.word = boost::locale::to_lower( w.word );
-    }
-    catch( std::runtime_error &e )
-    {
-
-    }
-}
-
-bool GSpeak::convert_words_to_tokens( const StrVect & inp, TokenVect & outp, lang_tools::lang_e lang_def )
-{
-    lang_tools::lang_e lang = lang_def;
-
-    for( auto s : inp )
-    {
-        lang_tools::lang_e l = check_lang( s );
-
-        if( l != lang_tools::lang_e::UNDEF )
-        {
-            lang = l;
-            continue;   // don't generate a word since it's a keyword
-        }
-
-        WordLocale w;
-
-        w.lang  = lang;
-        w.word  = s;
-
-        localize( w );
-
-        uint32                  id = get_word_id( w );
-
-        if( id == 0 )
-        {
-            dummy_log_error( MODULENAME, "cannot get id for word '%s'", s.c_str() );
-            return false;
-        }
-
-        Token t;
-
-        t.id    = id;
-        t.lang  = lang;
-
-        outp.push_back( t );
-    }
-
-    return true;
-}
-
-uint32 GSpeak::get_word_hash( const WordLocale & w )
-{
-    std::size_t seed = 0;
-
-    boost::hash_combine( seed, boost::hash_value( w.lang ) );
-
-    boost::hash_combine( seed, boost::hash_value( w.word ) );
-
-    return seed;
-}
-
-uint32 GSpeak::get_word_id( const WordLocale & w )
-{
-    auto res = word_to_id_.find( w );
-
-    if( res == word_to_id_.end() )
-    {
-        uint32 id  = get_word_hash( w );
-
-        add_new_word( w, id );
-
-        return id;
-    }
-
-    return res->second;
-}
-
-bool GSpeak::add_new_word( const WordLocale & w, uint32 id )
-{
-    word_to_id_[ w ]   = id;
-
-    Token t;
-
-    t.id    = id;
-    t.lang  = w.lang;
-
-    id_to_word_.insert( MapTokenToString::value_type( t, w.word ) );
-
-    return true;
-}
-
-bool GSpeak::say_word( const Token & t, const std::string & mp3_file )
-{
-    const std::string & w = id_to_word_[ t ];
-
-    return gtts_.say( w, mp3_file, t.lang );
-}
-
-
-NAMESPACE_GSPEAK_END

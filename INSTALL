@@ -4,12 +4,8 @@
 3rd party:
 
 - curl
-- lame
 - boost 1.53
 
 own:
 
-- convimp3
-- lameplus
-- utils
-- wave
+- utils (HTTPDownloader)
