@@ -6,7 +6,7 @@ int main()
 {
     std::string lang;
 
-    std::cout << "enter language: ";
+    std::cout << "enter language (en, de, ru): ";
     std::getline( std::cin, lang );
 
     std::string input;
