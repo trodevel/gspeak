@@ -19,17 +19,17 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 2532 $ $Date:: 2015-09-09 #$ $Author: serge $
+// $Revision: 2872 $ $Date:: 2015-12-02 #$ $Author: serge $
 
 #ifndef GSPEAK_GSPEAK_H
 #define GSPEAK_GSPEAK_H
 
-#include "i_text_to_speech.h"       // IGtts
+#include <string>
 
 namespace gspeak
 {
 
-class GSpeak: virtual public ITextToSpeech
+class GSpeak
 {
 public:
 
@@ -38,7 +38,7 @@ public:
 
     ~GSpeak();
 
-    virtual bool say( const std::string & text, const std::string & filename, const std::string & lang, std::string & error );
+    bool say( const std::string & text, const std::string & filename, const std::string & lang, std::string & error );
 
 private:
 

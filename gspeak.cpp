@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 2531 $ $Date:: 2015-09-09 #$ $Author: serge $
+// $Revision: 2565 $ $Date:: 2015-09-16 #$ $Author: serge $
 
 
 #include "gspeak.h"                 // self
